@@ -2,7 +2,7 @@
 
 ![Docs](images/pipeline_done.png)
 
-The purpose of this repository is to launch a training process in production using GCP cloud services. To do that inputs could be from bigquery or cloud storage and ML model can be available in VertexAI endpoint or FastAPI Restful API.
+This repository aims to facilitate launching a production training process using Google Cloud Platform (GCP) services. It supports input data from BigQuery or Cloud Storage, and enables deployment of machine learning model to VertexAI endpoint or Cloud Run for FastAPI RESTful API.
 
 ## 1. Getting started
 
@@ -13,7 +13,14 @@ This process required the tools showed below:
 - GCP
 
 Additionally, it is required that you create a service account in your GCP project and enable the follow GCP API services:
-
+    - aiplatform.googleapis.com
+    - artifactregistry.googleapis.com
+    - ml.googleapis.com    
+    - bigquery.googleapis.com
+    - compute.googleapis.com
+    - iamcredentials.googleapis.com
+    - iam.googleapis.com
+    
 ## 2. Clone
 
 Clone this repository in your instance:
