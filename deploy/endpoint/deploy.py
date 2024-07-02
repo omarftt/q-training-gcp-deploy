@@ -122,7 +122,7 @@ if __name__ == "__main__":
         config = json.load(file)
 
     PROJECT_ID = config.get('PROJECT_ID', 'beaming-signal-428023-h8')
-    LOCATION = config.get('LOCATION', '')
+    LOCATION = config.get('LOCATION', 'us-central1')
     MODEL_ID = config['PIPELINE_PARAMS']['model_display_name']
 
     # Create an endpoint

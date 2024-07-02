@@ -27,5 +27,6 @@ def predict(model, input_data):
     - int: Predicted value from the model.
     """
     input_data = pd.DataFrame([input_data])
+    input_data = input_data.assign(Had_Past_Default=0, Loan_Duration_Years=0, int64_field_0=0)
     prediction = model.predict(input_data)
     return int(prediction[0])

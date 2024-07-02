@@ -1,5 +1,7 @@
 # Production ML model training
 
+![Docs](images/pipeline_done.png)
+
 The purpose of this repository is to launch a training process in production using GCP cloud services. To do that inputs could be from bigquery or cloud storage and ML model can be available in VertexAI endpoint or FastAPI Restful API.
 
 ## 1. Getting started
@@ -76,7 +78,16 @@ python _execution_/execute.py
 To serve the ML model, there are two options available:
 
 ### 6.1 Serving model using GCP Vertex AI Endpoint
+After check that your trained model is in Model Registry, you can serve the model using Vertex AI service. Run the command below:
+```bash
+python deploy/endpoint/deploy.py
+```
 
-### 6.2 Serving model using FastAPI
+### 6.2 Serving model using Cloud Run
+To serve your model with Cloud Run service, there is a FastAPI developed. Please upload your ML model to deploy/api-rest/resources path, enable the Artifact Registry service, create a repository, and update deploy/api-rest/deploy.sh with your resource details. Once done, run the deployment script with sh deploy/api-rest/deploy.sh.
+```bash
+bash deploy/api-rest/deploy.sh
+```
 
-## 7. Arquitecture explanation
+## 7. Arquitecture
+To understand better the services used. You can find the architecture here: [Architecture](image/arch.png)
