@@ -25,7 +25,7 @@ Additionally, it is required that you create a service account in your GCP proje
 
 Clone this repository in your instance:
 ```bash
-git clone https://github.com/omarftt/API-FastAPI-Postgres.git
+git clone https://github.com/omarftt/q-training-gcp-deploy.git
 ```
 
 ## 3. Installation
