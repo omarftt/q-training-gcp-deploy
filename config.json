@@ -13,5 +13,5 @@
         "train_project_id": "beaming-signal-428023-h8",
         "model_display_name": "model_logistic_regression_v1"
     },
-    "SERVICE_ACCOUNT": "sa-d-ml-gc-process@d-indgdb-ago-d33v.iam.gserviceaccount.com"
+    "SERVICE_ACCOUNT": "sa-experimental-training@beaming-signal-428023-h8.iam.gserviceaccount.com"
 }
