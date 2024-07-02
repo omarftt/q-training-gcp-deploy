@@ -48,11 +48,13 @@ bash installation/users.sh
 ```
 
 The training process can read two data sources: 'bigquery' or 'storage'. To enable these options, you must upload your .csv file into a cloud storage bucket or a bigquery table. Additionally, if you would like to do it automatically, upload your .csv file into 'data' folder and execute the follow command below:
-```bash
-For bigquery table:
-bash installation/resources.sh bigquery data/dataset.csv {insert_project_name} default-bucket {insert_dataset_name} {insert_table_name}
 
+For bigquery table:
+```bash
+bash installation/resources.sh bigquery data/dataset.csv {insert_project_name} default-bucket {insert_dataset_name} {insert_table_name}
+```
 For cloud storage bucket:
+```bash
 bash installation/resources.sh storage data/dataset.csv {insert_project_name} {insert_bucket_name} default_dataset default_table
 ```
 
@@ -69,7 +71,7 @@ bash installation/resources.sh storage data/dataset.csv {insert_project_name} {i
 ```bash
 jupyter nbconvert workspace/training.ipynb --to python --output ../_execution_/training_compile.py
 
-python _execution_/compile.py
+python _execution_/training_compile.py
 ```
 
 - Verify that compiled_pipeline.json file has been created on _execution_ folder.
