@@ -29,6 +29,7 @@ source venv/bin/activate
 
 Install all packages required
 ```bash
+pip install pip==21.3.1
 pip install -r requirements.txt
 ```
 

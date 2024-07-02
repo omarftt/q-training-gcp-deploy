@@ -1,5 +1,5 @@
 PyYAML
-kfp==1.8.21
+kfp
 google-cloud-aiplatform==1.18.1
 google-cloud-pipeline-components==1.0.24
 google-cloud-storage

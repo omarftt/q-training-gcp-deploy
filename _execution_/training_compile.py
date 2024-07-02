@@ -19,12 +19,26 @@ from kfp.v2.dsl import (component, Input, Model, Output, Dataset,
                         Metrics, InputPath)
 
 
+# ## Defining variables
+
+# In[2]:
+
+
+file_path = 'config.json'
+
+with open(file_path, 'r') as file:
+    config = json.load(file)
+    
+PIPELINE_DISPLAY_NAME = config.get('PIPELINE_DISPLAY_NAME', 'my_pipeline')
+PIPELINE_DESCRIPTION = config.get('PIPELINE_DESCRIPTION', 'pipeline challenge')
+
+
 # ## Creating components
 
 # In[38]:
 
 
-@component()
+@dsl.component()
 def error_raising(msg: str) -> None:
     raise(msg)
 
@@ -32,7 +46,7 @@ def error_raising(msg: str) -> None:
 # In[39]:
 
 
-@component(packages_to_install=['pandas', 'google-cloud-bigquery'])
+@dsl.component(packages_to_install=['pandas', 'google-cloud-bigquery', 'db-dtypes'])
 def load_from_bq(
     project_id: str,
     dataset_id: str,
@@ -81,8 +95,9 @@ def load_from_bq(
 # In[40]:
 
 
-@component(packages_to_install=['pandas', 'google-cloud-storage'])
+@dsl.component(packages_to_install=['pandas', 'google-cloud-storage', 'db-dtypes'])
 def load_from_gcs(
+    project_id: str,
     bucket_name: str,
     file_path: str,
     df_data: Output[Dataset],
@@ -107,7 +122,7 @@ def load_from_gcs(
 
     try:
         # Initialize the GCS client.
-        storage_client = storage.Client()
+        storage_client = storage.Client(project=project_id)
 
         # Get the bucket and blob.
         bucket = storage_client.bucket(bucket_name)
@@ -132,7 +147,7 @@ def load_from_gcs(
 # In[41]:
 
 
-@component(packages_to_install=['pandas', 'scikit-learn'])
+@dsl.component(packages_to_install=['pandas', 'scikit-learn', 'db-dtypes'])
 def preprocess_data(
     df_data: Input[Dataset],
     train_data: Output[Dataset],
@@ -157,7 +172,7 @@ def preprocess_data(
         # Preprocess the data
         columns_to_impute = ['Age', 'Annual_Income', 'Credit_Score', 'Loan_Amount', 'Number_of_Open_Accounts']
         imputer = SimpleImputer(fill_value=0)
-        df_imputed[columns_to_impute] = imputer.fit_transform(df[columns_to_impute])
+        df_imputed[columns_to_impute] = imputer.fit_transform(df_imputed[columns_to_impute])
 
         if not df_imputed.empty:
             df_imputed.to_csv(train_data.path, index=False)
@@ -172,9 +187,11 @@ def preprocess_data(
 # In[42]:
 
 
-@component(packages_to_install=['pandas', 'scikit-learn', 'google-cloud-aiplatform'])
+@dsl.component(packages_to_install=['pandas', 'scikit-learn', 'google-cloud-aiplatform', 'db-dtypes'])
 def train_and_save_model(
-    project_id: str, 
+    project_id: str,
+    source_project: str,
+    bucket_name: str,
     region: str, 
     model_display_name: str,
     train_data: Input[Dataset]
@@ -194,6 +211,7 @@ def train_and_save_model(
     
     from sklearn.model_selection import train_test_split
     from sklearn.linear_model import LogisticRegression
+    from google.cloud import storage
     from google.cloud import aiplatform
     import pandas as pd
     import joblib
@@ -201,7 +219,7 @@ def train_and_save_model(
 
     try:
         
-        df = pd.read_csv(df_data.path)
+        df = pd.read_csv(train_data.path)
         
         # Splitting the data into features and target
         X = df.drop('Loan_Approval', axis=1)
@@ -221,26 +239,26 @@ def train_and_save_model(
         # Save the model to a local file
         model_filename = 'model.joblib'
         joblib.dump(model, model_filename)
-
-        # Initialize the Vertex AI client
-        aiplatform.init(project=project_id, location=region)
-
-        # Upload the model to Vertex AI Model Registry
-        aiplatform.Model.upload(
-            display_name=model_display_name,
-            artifact_uri=f'gs://{project_id}/{model_filename}',  # GCS bucket URI for Vertex AI Model Registry
-            serving_container_image_uri='us-docker.pkg.dev/vertex-ai/prediction/sklearn-cpu.0-23:latest'
-        )
-
-        print(f"Model {model_display_name} successfully uploaded to Vertex AI Model Registry.")
-
+        
         # Upload the model file to Google Cloud Storage
-        storage_client = storage.Client()
-        bucket = storage_client.bucket(project_id)
+        storage_client = storage.Client(project=source_project)
+        bucket = storage_client.bucket(bucket_name)
         blob = bucket.blob(model_filename)
         blob.upload_from_filename(model_filename)
 
         print(f"Model {model_filename} uploaded to Google Cloud Storage.")
+        
+        # Initialize the Vertex AI client
+        aiplatform.init(project=source_project, location=region)
+        
+        # Upload the model to Vertex AI Model Registry
+        aiplatform.Model.upload(
+            display_name=model_display_name,
+            artifact_uri=f'gs://{bucket_name}',  # GCS bucket URI for Vertex AI Model Registry
+            serving_container_image_uri='us-docker.pkg.dev/vertex-ai/prediction/sklearn-cpu.0-23:latest'
+        )
+
+        print(f"Model {model_display_name} successfully uploaded to Vertex AI Model Registry.")
 
     except Exception as e:
         print(f"An error occurred during model training, upload to Vertex AI, or upload to Cloud Storage: {e}")
@@ -281,13 +299,16 @@ def main_pipeline(
                                         ).after(load_data_op).set_display_name("Preprocessing data")
     
         train_save_op = train_and_save_model(
-                                        project_id=train_project_id, 
+                                        project_id=train_project_id,
+                                        source_project=source_project,
+                                        bucket_name=source_bucket,
                                         region=gcp_region, 
                                         model_display_name=model_display_name,
                                         train_data=preprocess_data_op.outputs['train_data'], 
                                         ).after(preprocess_data_op).set_display_name("Training and saving model")
     with dsl.Elif(data_source == 'storage'):
         load_data_op = load_from_gcs(
+                                    project_id=source_project,
                                     bucket_name=source_bucket,
                                     file_path=datafile_name,
                                     file_format='csv'
@@ -299,13 +320,12 @@ def main_pipeline(
     
         train_save_op = train_and_save_model(
                                         project_id=train_project_id, 
+                                        source_project=source_project,
+                                        bucket_name=source_bucket,
                                         region=gcp_region, 
                                         model_display_name=model_display_name,
                                         train_data=preprocess_data_op.outputs['train_data'], 
                                         ).after(preprocess_data_op).set_display_name("Training and saving model")
-    with dsl.Else():
-        error_raising(msg="No se logro validar la fuente de datos")
-    
 
 
 # ## Compiling
@@ -315,7 +335,7 @@ def main_pipeline(
 
 compiler.Compiler().compile(
     pipeline_func=main_pipeline,
-    package_path='../_execution_/compiled_pipeline.json'
+    package_path='_execution_/compiled_pipeline.json'
 )
 
 

@@ -53,7 +53,7 @@ def main(job_id: str = None,
 
         # Initialize AI Platform
         print('Initializing AI Platform...')
-        aiplatform.init(project=project_id, location=region)
+        aiplatform.init(project=project_id, location=region, staging_bucket="gs://dev_indg_gc_in4gc9")
 
         # Generate pipeline job
         print('Generating pipeline job...')

@@ -74,9 +74,6 @@
                 }
               },
               "parameters": {
-                "bucket_name": {
-                  "componentInputParameter": "pipelinechannel--source_bucket"
-                },
                 "model_display_name": {
                   "componentInputParameter": "pipelinechannel--model_display_name"
                 },
@@ -85,9 +82,6 @@
                 },
                 "region": {
                   "componentInputParameter": "pipelinechannel--gcp_region"
-                },
-                "source_project": {
-                  "componentInputParameter": "pipelinechannel--source_project"
                 }
               }
             },
@@ -106,9 +100,6 @@
             "parameterType": "STRING"
           },
           "pipelinechannel--model_display_name": {
-            "parameterType": "STRING"
-          },
-          "pipelinechannel--source_bucket": {
             "parameterType": "STRING"
           },
           "pipelinechannel--source_dataset": {
@@ -148,9 +139,6 @@
                 },
                 "file_path": {
                   "componentInputParameter": "pipelinechannel--datafile_name"
-                },
-                "project_id": {
-                  "componentInputParameter": "pipelinechannel--source_project"
                 }
               }
             },
@@ -202,9 +190,6 @@
                 }
               },
               "parameters": {
-                "bucket_name": {
-                  "componentInputParameter": "pipelinechannel--source_bucket"
-                },
                 "model_display_name": {
                   "componentInputParameter": "pipelinechannel--model_display_name"
                 },
@@ -213,9 +198,6 @@
                 },
                 "region": {
                   "componentInputParameter": "pipelinechannel--gcp_region"
-                },
-                "source_project": {
-                  "componentInputParameter": "pipelinechannel--source_project"
                 }
               }
             },
@@ -242,9 +224,6 @@
           "pipelinechannel--source_bucket": {
             "parameterType": "STRING"
           },
-          "pipelinechannel--source_project": {
-            "parameterType": "STRING"
-          },
           "pipelinechannel--train_project_id": {
             "parameterType": "STRING"
           }
@@ -268,9 +247,6 @@
                 },
                 "pipelinechannel--model_display_name": {
                   "componentInputParameter": "pipelinechannel--model_display_name"
-                },
-                "pipelinechannel--source_bucket": {
-                  "componentInputParameter": "pipelinechannel--source_bucket"
                 },
                 "pipelinechannel--source_dataset": {
                   "componentInputParameter": "pipelinechannel--source_dataset"
@@ -313,9 +289,6 @@
                 },
                 "pipelinechannel--source_bucket": {
                   "componentInputParameter": "pipelinechannel--source_bucket"
-                },
-                "pipelinechannel--source_project": {
-                  "componentInputParameter": "pipelinechannel--source_project"
                 },
                 "pipelinechannel--train_project_id": {
                   "componentInputParameter": "pipelinechannel--train_project_id"
@@ -413,9 +386,6 @@
           "file_path": {
             "description": "The path to the file within the GCS bucket.",
             "parameterType": "STRING"
-          },
-          "project_id": {
-            "parameterType": "STRING"
           }
         }
       },
@@ -490,9 +460,6 @@
           }
         },
         "parameters": {
-          "bucket_name": {
-            "parameterType": "STRING"
-          },
           "model_display_name": {
             "description": "Display name for the model in Vertex AI.",
             "parameterType": "STRING"
@@ -503,9 +470,6 @@
           },
           "region": {
             "description": "Region for Vertex AI.",
-            "parameterType": "STRING"
-          },
-          "source_project": {
             "parameterType": "STRING"
           }
         }
@@ -523,9 +487,6 @@
           }
         },
         "parameters": {
-          "bucket_name": {
-            "parameterType": "STRING"
-          },
           "model_display_name": {
             "description": "Display name for the model in Vertex AI.",
             "parameterType": "STRING"
@@ -536,9 +497,6 @@
           },
           "region": {
             "description": "Region for Vertex AI.",
-            "parameterType": "STRING"
-          },
-          "source_project": {
             "parameterType": "STRING"
           }
         }
@@ -558,7 +516,7 @@
           "command": [
             "sh",
             "-c",
-            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.8.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'google-cloud-bigquery' 'db-dtypes' && \"$0\" \"$@\"\n",
+            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.8.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'google-cloud-bigquery' && \"$0\" \"$@\"\n",
             "sh",
             "-ec",
             "program_path=$(mktemp -d)\n\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\n_KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
@@ -578,11 +536,11 @@
           "command": [
             "sh",
             "-c",
-            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.8.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'google-cloud-storage' 'db-dtypes' && \"$0\" \"$@\"\n",
+            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.8.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'google-cloud-storage' && \"$0\" \"$@\"\n",
             "sh",
             "-ec",
             "program_path=$(mktemp -d)\n\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\n_KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
-            "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import *\n\ndef load_from_gcs(\n    project_id: str,\n    bucket_name: str,\n    file_path: str,\n    df_data: Output[Dataset],\n    file_format: str = \"csv\",\n) -> None:\n\n    \"\"\"\n    Load data from a specified GCS bucket and file, and return a pandas DataFrame.\n\n    Args:\n        bucket_name (str): The name of the GCS bucket.\n        file_path (str): The path to the file within the GCS bucket.\n        file_format (str): The format of the file (e.g., \"csv\", \"json\"). Default is \"csv\".\n\n    Returns:\n        pd.DataFrame: DataFrame containing the data from the file.\n    \"\"\"\n\n    from google.cloud import storage\n    import pandas as pd\n    from io import BytesIO\n\n    try:\n        # Initialize the GCS client.\n        storage_client = storage.Client(project=project_id)\n\n        # Get the bucket and blob.\n        bucket = storage_client.bucket(bucket_name)\n        blob = bucket.blob(file_path)\n        file_bytes = blob.download_as_bytes()\n\n        # Load the file into a pandas DataFrame based on the specified format.\n        if file_format == \"csv\":\n            df_loaded = pd.read_csv(BytesIO(file_bytes))\n        else:\n            raise ValueError(\"Unsupported file format. Please use 'csv'.\")\n\n        if not df_loaded.empty:\n            df_loaded.to_csv(df_data.path, index=False)\n        else:\n            raise ValueError(\"Table content is empty.\")\n    except Exception as e:\n        print(f\"An error occurred during file load: {e}\")\n        raise\n\n"
+            "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import *\n\ndef load_from_gcs(\n    bucket_name: str,\n    file_path: str,\n    df_data: Output[Dataset],\n    file_format: str = \"csv\",\n) -> None:\n\n    \"\"\"\n    Load data from a specified GCS bucket and file, and return a pandas DataFrame.\n\n    Args:\n        bucket_name (str): The name of the GCS bucket.\n        file_path (str): The path to the file within the GCS bucket.\n        file_format (str): The format of the file (e.g., \"csv\", \"json\"). Default is \"csv\".\n\n    Returns:\n        pd.DataFrame: DataFrame containing the data from the file.\n    \"\"\"\n\n    from google.cloud import storage\n    import pandas as pd\n    from io import BytesIO\n\n    try:\n        # Initialize the GCS client.\n        storage_client = storage.Client()\n\n        # Get the bucket and blob.\n        bucket = storage_client.bucket(bucket_name)\n        blob = bucket.blob(file_path)\n        file_bytes = blob.download_as_bytes()\n\n        # Load the file into a pandas DataFrame based on the specified format.\n        if file_format == \"csv\":\n            df_loaded = pd.read_csv(BytesIO(file_bytes))\n        else:\n            raise ValueError(\"Unsupported file format. Please use 'csv'.\")\n\n        if not df_loaded.empty:\n            df_loaded.to_csv(df_data.path, index=False)\n        else:\n            raise ValueError(\"Table content is empty.\")\n    except Exception as e:\n        print(f\"An error occurred during file load: {e}\")\n        raise\n\n"
           ],
           "image": "python:3.8"
         }
@@ -598,11 +556,11 @@
           "command": [
             "sh",
             "-c",
-            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.8.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'scikit-learn' 'db-dtypes' && \"$0\" \"$@\"\n",
+            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.8.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'scikit-learn' && \"$0\" \"$@\"\n",
             "sh",
             "-ec",
             "program_path=$(mktemp -d)\n\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\n_KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
-            "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import *\n\ndef preprocess_data(\n    df_data: Input[Dataset],\n    train_data: Output[Dataset],\n) -> None:\n    \"\"\"\n    Preprocess the input DataFrame by handling null values in the specified columns.\n\n    Args:\n        df_data (pd.DataFrame): Input DataFrame with potential null values.\n\n    Returns:\n        pd.DataFrame: DataFrame preprocessed.\n    \"\"\"\n\n    from sklearn.impute import SimpleImputer\n    import pandas as pd\n\n    try:\n        # Create a copy of the DataFrame to avoid modifying the original\n        df_imputed = pd.read_csv(df_data.path)\n\n        # Preprocess the data\n        columns_to_impute = ['Age', 'Annual_Income', 'Credit_Score', 'Loan_Amount', 'Number_of_Open_Accounts']\n        imputer = SimpleImputer(fill_value=0)\n        df_imputed[columns_to_impute] = imputer.fit_transform(df_imputed[columns_to_impute])\n\n        if not df_imputed.empty:\n            df_imputed.to_csv(train_data.path, index=False)\n        else:\n            raise ValueError(\"Table content is empty.\")\n\n    except Exception as e:\n        print(f\"An error occurred during preprocessing: {e}\")\n        raise  \n\n"
+            "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import *\n\ndef preprocess_data(\n    df_data: Input[Dataset],\n    train_data: Output[Dataset],\n) -> None:\n    \"\"\"\n    Preprocess the input DataFrame by handling null values in the specified columns.\n\n    Args:\n        df_data (pd.DataFrame): Input DataFrame with potential null values.\n\n    Returns:\n        pd.DataFrame: DataFrame preprocessed.\n    \"\"\"\n\n    from sklearn.impute import SimpleImputer\n    import pandas as pd\n\n    try:\n        # Create a copy of the DataFrame to avoid modifying the original\n        df_imputed = pd.read_csv(df_data.path)\n\n        # Preprocess the data\n        columns_to_impute = ['Age', 'Annual_Income', 'Credit_Score', 'Loan_Amount', 'Number_of_Open_Accounts']\n        imputer = SimpleImputer(fill_value=0)\n        df_imputed[columns_to_impute] = imputer.fit_transform(df[columns_to_impute])\n\n        if not df_imputed.empty:\n            df_imputed.to_csv(train_data.path, index=False)\n        else:\n            raise ValueError(\"Table content is empty.\")\n\n    except Exception as e:\n        print(f\"An error occurred during preprocessing: {e}\")\n        raise  \n\n"
           ],
           "image": "python:3.8"
         }
@@ -618,11 +576,11 @@
           "command": [
             "sh",
             "-c",
-            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.8.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'scikit-learn' 'db-dtypes' && \"$0\" \"$@\"\n",
+            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.8.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'scikit-learn' && \"$0\" \"$@\"\n",
             "sh",
             "-ec",
             "program_path=$(mktemp -d)\n\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\n_KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
-            "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import *\n\ndef preprocess_data(\n    df_data: Input[Dataset],\n    train_data: Output[Dataset],\n) -> None:\n    \"\"\"\n    Preprocess the input DataFrame by handling null values in the specified columns.\n\n    Args:\n        df_data (pd.DataFrame): Input DataFrame with potential null values.\n\n    Returns:\n        pd.DataFrame: DataFrame preprocessed.\n    \"\"\"\n\n    from sklearn.impute import SimpleImputer\n    import pandas as pd\n\n    try:\n        # Create a copy of the DataFrame to avoid modifying the original\n        df_imputed = pd.read_csv(df_data.path)\n\n        # Preprocess the data\n        columns_to_impute = ['Age', 'Annual_Income', 'Credit_Score', 'Loan_Amount', 'Number_of_Open_Accounts']\n        imputer = SimpleImputer(fill_value=0)\n        df_imputed[columns_to_impute] = imputer.fit_transform(df_imputed[columns_to_impute])\n\n        if not df_imputed.empty:\n            df_imputed.to_csv(train_data.path, index=False)\n        else:\n            raise ValueError(\"Table content is empty.\")\n\n    except Exception as e:\n        print(f\"An error occurred during preprocessing: {e}\")\n        raise  \n\n"
+            "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import *\n\ndef preprocess_data(\n    df_data: Input[Dataset],\n    train_data: Output[Dataset],\n) -> None:\n    \"\"\"\n    Preprocess the input DataFrame by handling null values in the specified columns.\n\n    Args:\n        df_data (pd.DataFrame): Input DataFrame with potential null values.\n\n    Returns:\n        pd.DataFrame: DataFrame preprocessed.\n    \"\"\"\n\n    from sklearn.impute import SimpleImputer\n    import pandas as pd\n\n    try:\n        # Create a copy of the DataFrame to avoid modifying the original\n        df_imputed = pd.read_csv(df_data.path)\n\n        # Preprocess the data\n        columns_to_impute = ['Age', 'Annual_Income', 'Credit_Score', 'Loan_Amount', 'Number_of_Open_Accounts']\n        imputer = SimpleImputer(fill_value=0)\n        df_imputed[columns_to_impute] = imputer.fit_transform(df[columns_to_impute])\n\n        if not df_imputed.empty:\n            df_imputed.to_csv(train_data.path, index=False)\n        else:\n            raise ValueError(\"Table content is empty.\")\n\n    except Exception as e:\n        print(f\"An error occurred during preprocessing: {e}\")\n        raise  \n\n"
           ],
           "image": "python:3.8"
         }
@@ -638,11 +596,11 @@
           "command": [
             "sh",
             "-c",
-            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.8.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'scikit-learn' 'google-cloud-aiplatform' 'db-dtypes' && \"$0\" \"$@\"\n",
+            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.8.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'scikit-learn' 'google-cloud-aiplatform' && \"$0\" \"$@\"\n",
             "sh",
             "-ec",
             "program_path=$(mktemp -d)\n\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\n_KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
-            "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import *\n\ndef train_and_save_model(\n    project_id: str,\n    source_project: str,\n    bucket_name: str,\n    region: str, \n    model_display_name: str,\n    train_data: Input[Dataset]\n) -> None:\n    \"\"\"\n    Train a Logistic Regression model and save it to the Vertex AI Model Registry and Google Cloud Storage.\n\n    Args:\n        df (pd.DataFrame): Input DataFrame for training.\n        project_id (str): Google Cloud project ID.\n        region (str): Region for Vertex AI.\n        model_display_name (str): Display name for the model in Vertex AI.\n\n    Returns:\n        None\n    \"\"\"\n\n    from sklearn.model_selection import train_test_split\n    from sklearn.linear_model import LogisticRegression\n    from google.cloud import storage\n    from google.cloud import aiplatform\n    import pandas as pd\n    import joblib\n    import os\n\n    try:\n\n        df = pd.read_csv(train_data.path)\n\n        # Splitting the data into features and target\n        X = df.drop('Loan_Approval', axis=1)\n        y = df['Loan_Approval']\n\n        # Splitting the data into training and test sets\n        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.01, random_state=42)\n\n        # Training the Logistic Regression model\n        model = LogisticRegression()\n        model.fit(X_train, y_train)\n\n        # Predictions\n        y_pred = model.predict(X_test)\n        print(y_pred)\n\n        # Save the model to a local file\n        model_filename = 'model.joblib'\n        joblib.dump(model, model_filename)\n\n        # Upload the model file to Google Cloud Storage\n        storage_client = storage.Client(project=source_project)\n        bucket = storage_client.bucket(bucket_name)\n        blob = bucket.blob(model_filename)\n        blob.upload_from_filename(model_filename)\n\n        print(f\"Model {model_filename} uploaded to Google Cloud Storage.\")\n\n        # Initialize the Vertex AI client\n        aiplatform.init(project=source_project, location=region)\n\n        # Upload the model to Vertex AI Model Registry\n        aiplatform.Model.upload(\n            display_name=model_display_name,\n            artifact_uri=f'gs://{bucket_name}',  # GCS bucket URI for Vertex AI Model Registry\n            serving_container_image_uri='us-docker.pkg.dev/vertex-ai/prediction/sklearn-cpu.0-23:latest'\n        )\n\n        print(f\"Model {model_display_name} successfully uploaded to Vertex AI Model Registry.\")\n\n    except Exception as e:\n        print(f\"An error occurred during model training, upload to Vertex AI, or upload to Cloud Storage: {e}\")\n        raise  # Re-raise the exception to stop the pipeline\n\n"
+            "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import *\n\ndef train_and_save_model(\n    project_id: str, \n    region: str, \n    model_display_name: str,\n    train_data: Input[Dataset]\n) -> None:\n    \"\"\"\n    Train a Logistic Regression model and save it to the Vertex AI Model Registry and Google Cloud Storage.\n\n    Args:\n        df (pd.DataFrame): Input DataFrame for training.\n        project_id (str): Google Cloud project ID.\n        region (str): Region for Vertex AI.\n        model_display_name (str): Display name for the model in Vertex AI.\n\n    Returns:\n        None\n    \"\"\"\n\n    from sklearn.model_selection import train_test_split\n    from sklearn.linear_model import LogisticRegression\n    from google.cloud import aiplatform\n    import pandas as pd\n    import joblib\n    import os\n\n    try:\n\n        df = pd.read_csv(df_data.path)\n\n        # Splitting the data into features and target\n        X = df.drop('Loan_Approval', axis=1)\n        y = df['Loan_Approval']\n\n        # Splitting the data into training and test sets\n        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.01, random_state=42)\n\n        # Training the Logistic Regression model\n        model = LogisticRegression()\n        model.fit(X_train, y_train)\n\n        # Predictions\n        y_pred = model.predict(X_test)\n        print(y_pred)\n\n        # Save the model to a local file\n        model_filename = 'model.joblib'\n        joblib.dump(model, model_filename)\n\n        # Initialize the Vertex AI client\n        aiplatform.init(project=project_id, location=region)\n\n        # Upload the model to Vertex AI Model Registry\n        aiplatform.Model.upload(\n            display_name=model_display_name,\n            artifact_uri=f'gs://{project_id}/{model_filename}',  # GCS bucket URI for Vertex AI Model Registry\n            serving_container_image_uri='us-docker.pkg.dev/vertex-ai/prediction/sklearn-cpu.0-23:latest'\n        )\n\n        print(f\"Model {model_display_name} successfully uploaded to Vertex AI Model Registry.\")\n\n        # Upload the model file to Google Cloud Storage\n        storage_client = storage.Client()\n        bucket = storage_client.bucket(project_id)\n        blob = bucket.blob(model_filename)\n        blob.upload_from_filename(model_filename)\n\n        print(f\"Model {model_filename} uploaded to Google Cloud Storage.\")\n\n    except Exception as e:\n        print(f\"An error occurred during model training, upload to Vertex AI, or upload to Cloud Storage: {e}\")\n        raise  # Re-raise the exception to stop the pipeline\n\n"
           ],
           "image": "python:3.8"
         }
@@ -658,11 +616,11 @@
           "command": [
             "sh",
             "-c",
-            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.8.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'scikit-learn' 'google-cloud-aiplatform' 'db-dtypes' && \"$0\" \"$@\"\n",
+            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.8.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'scikit-learn' 'google-cloud-aiplatform' && \"$0\" \"$@\"\n",
             "sh",
             "-ec",
             "program_path=$(mktemp -d)\n\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\n_KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
-            "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import *\n\ndef train_and_save_model(\n    project_id: str,\n    source_project: str,\n    bucket_name: str,\n    region: str, \n    model_display_name: str,\n    train_data: Input[Dataset]\n) -> None:\n    \"\"\"\n    Train a Logistic Regression model and save it to the Vertex AI Model Registry and Google Cloud Storage.\n\n    Args:\n        df (pd.DataFrame): Input DataFrame for training.\n        project_id (str): Google Cloud project ID.\n        region (str): Region for Vertex AI.\n        model_display_name (str): Display name for the model in Vertex AI.\n\n    Returns:\n        None\n    \"\"\"\n\n    from sklearn.model_selection import train_test_split\n    from sklearn.linear_model import LogisticRegression\n    from google.cloud import storage\n    from google.cloud import aiplatform\n    import pandas as pd\n    import joblib\n    import os\n\n    try:\n\n        df = pd.read_csv(train_data.path)\n\n        # Splitting the data into features and target\n        X = df.drop('Loan_Approval', axis=1)\n        y = df['Loan_Approval']\n\n        # Splitting the data into training and test sets\n        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.01, random_state=42)\n\n        # Training the Logistic Regression model\n        model = LogisticRegression()\n        model.fit(X_train, y_train)\n\n        # Predictions\n        y_pred = model.predict(X_test)\n        print(y_pred)\n\n        # Save the model to a local file\n        model_filename = 'model.joblib'\n        joblib.dump(model, model_filename)\n\n        # Upload the model file to Google Cloud Storage\n        storage_client = storage.Client(project=source_project)\n        bucket = storage_client.bucket(bucket_name)\n        blob = bucket.blob(model_filename)\n        blob.upload_from_filename(model_filename)\n\n        print(f\"Model {model_filename} uploaded to Google Cloud Storage.\")\n\n        # Initialize the Vertex AI client\n        aiplatform.init(project=source_project, location=region)\n\n        # Upload the model to Vertex AI Model Registry\n        aiplatform.Model.upload(\n            display_name=model_display_name,\n            artifact_uri=f'gs://{bucket_name}',  # GCS bucket URI for Vertex AI Model Registry\n            serving_container_image_uri='us-docker.pkg.dev/vertex-ai/prediction/sklearn-cpu.0-23:latest'\n        )\n\n        print(f\"Model {model_display_name} successfully uploaded to Vertex AI Model Registry.\")\n\n    except Exception as e:\n        print(f\"An error occurred during model training, upload to Vertex AI, or upload to Cloud Storage: {e}\")\n        raise  # Re-raise the exception to stop the pipeline\n\n"
+            "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import *\n\ndef train_and_save_model(\n    project_id: str, \n    region: str, \n    model_display_name: str,\n    train_data: Input[Dataset]\n) -> None:\n    \"\"\"\n    Train a Logistic Regression model and save it to the Vertex AI Model Registry and Google Cloud Storage.\n\n    Args:\n        df (pd.DataFrame): Input DataFrame for training.\n        project_id (str): Google Cloud project ID.\n        region (str): Region for Vertex AI.\n        model_display_name (str): Display name for the model in Vertex AI.\n\n    Returns:\n        None\n    \"\"\"\n\n    from sklearn.model_selection import train_test_split\n    from sklearn.linear_model import LogisticRegression\n    from google.cloud import aiplatform\n    import pandas as pd\n    import joblib\n    import os\n\n    try:\n\n        df = pd.read_csv(df_data.path)\n\n        # Splitting the data into features and target\n        X = df.drop('Loan_Approval', axis=1)\n        y = df['Loan_Approval']\n\n        # Splitting the data into training and test sets\n        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.01, random_state=42)\n\n        # Training the Logistic Regression model\n        model = LogisticRegression()\n        model.fit(X_train, y_train)\n\n        # Predictions\n        y_pred = model.predict(X_test)\n        print(y_pred)\n\n        # Save the model to a local file\n        model_filename = 'model.joblib'\n        joblib.dump(model, model_filename)\n\n        # Initialize the Vertex AI client\n        aiplatform.init(project=project_id, location=region)\n\n        # Upload the model to Vertex AI Model Registry\n        aiplatform.Model.upload(\n            display_name=model_display_name,\n            artifact_uri=f'gs://{project_id}/{model_filename}',  # GCS bucket URI for Vertex AI Model Registry\n            serving_container_image_uri='us-docker.pkg.dev/vertex-ai/prediction/sklearn-cpu.0-23:latest'\n        )\n\n        print(f\"Model {model_display_name} successfully uploaded to Vertex AI Model Registry.\")\n\n        # Upload the model file to Google Cloud Storage\n        storage_client = storage.Client()\n        bucket = storage_client.bucket(project_id)\n        blob = bucket.blob(model_filename)\n        blob.upload_from_filename(model_filename)\n\n        print(f\"Model {model_filename} uploaded to Google Cloud Storage.\")\n\n    except Exception as e:\n        print(f\"An error occurred during model training, upload to Vertex AI, or upload to Cloud Storage: {e}\")\n        raise  # Re-raise the exception to stop the pipeline\n\n"
           ],
           "image": "python:3.8"
         }

@@ -19,12 +19,26 @@ from kfp.v2.dsl import (component, Input, Model, Output, Dataset,
                         Metrics, InputPath)
 
 
+# ## Defining variables
+
+# In[2]:
+
+
+file_path = 'config.json'
+
+with open(file_path, 'r') as file:
+    config = json.load(file)
+    
+PIPELINE_DISPLAY_NAME = config.get('PIPELINE_DISPLAY_NAME', 'my_pipeline')
+PIPELINE_DESCRIPTION = config.get('PIPELINE_DESCRIPTION', 'pipeline challenge')
+
+
 # ## Creating components
 
 # In[38]:
 
 
-@component()
+@dsl.component()
 def error_raising(msg: str) -> None:
     raise(msg)
 
@@ -32,7 +46,7 @@ def error_raising(msg: str) -> None:
 # In[39]:
 
 
-@component(packages_to_install=['pandas', 'google-cloud-bigquery'])
+@dsl.component(packages_to_install=['pandas', 'google-cloud-bigquery'])
 def load_from_bq(
     project_id: str,
     dataset_id: str,
@@ -81,7 +95,7 @@ def load_from_bq(
 # In[40]:
 
 
-@component(packages_to_install=['pandas', 'google-cloud-storage'])
+@dsl.component(packages_to_install=['pandas', 'google-cloud-storage'])
 def load_from_gcs(
     bucket_name: str,
     file_path: str,
@@ -132,7 +146,7 @@ def load_from_gcs(
 # In[41]:
 
 
-@component(packages_to_install=['pandas', 'scikit-learn'])
+@dsl.component(packages_to_install=['pandas', 'scikit-learn'])
 def preprocess_data(
     df_data: Input[Dataset],
     train_data: Output[Dataset],
@@ -172,7 +186,7 @@ def preprocess_data(
 # In[42]:
 
 
-@component(packages_to_install=['pandas', 'scikit-learn', 'google-cloud-aiplatform'])
+@dsl.component(packages_to_install=['pandas', 'scikit-learn', 'google-cloud-aiplatform'])
 def train_and_save_model(
     project_id: str, 
     region: str, 
@@ -269,7 +283,7 @@ def main_pipeline(
     gcp_region: str = "us-central1",
 ):
     
-    with dsl.If(data_source == 'bigquery'):
+    with dsl.Condition(data_source == 'bigquery'):
         load_data_op = load_from_bq(
                                     project_id=source_project,
                                     dataset_id=source_dataset,
@@ -286,7 +300,7 @@ def main_pipeline(
                                         model_display_name=model_display_name,
                                         train_data=preprocess_data_op.outputs['train_data'], 
                                         ).after(preprocess_data_op).set_display_name("Training and saving model")
-    with dsl.Elif(data_source == 'storage'):
+    with dsl.Condition(data_source == 'storage'):
         load_data_op = load_from_gcs(
                                     bucket_name=source_bucket,
                                     file_path=datafile_name,
@@ -303,8 +317,7 @@ def main_pipeline(
                                         model_display_name=model_display_name,
                                         train_data=preprocess_data_op.outputs['train_data'], 
                                         ).after(preprocess_data_op).set_display_name("Training and saving model")
-    with dsl.Else():
-        error_raising(msg="No se logro validar la fuente de datos")
+    
     
 
 

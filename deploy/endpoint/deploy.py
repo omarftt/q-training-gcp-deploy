@@ -1,6 +1,7 @@
 from typing import Optional, Dict, Sequence, Tuple
 from google.cloud import aiplatform
 from google.cloud.aiplatform import explain
+import json
 
 def create_endpoint_sample(
     project: str,
@@ -78,9 +79,14 @@ def deploy_model_with_dedicated_resources_sample(
     """
     # Initialize Vertex AI client
     aiplatform.init(project=project, location=location)
+    
+    models = aiplatform.Model.list()
+    for model in models:
+        if model.display_name == model_name:
+            model_id = model.name
 
     # Create model instance with specified model name
-    model = aiplatform.Model(model_name=model_name)
+    model = aiplatform.Model(model_name=model_id)
 
     # Deploy model to endpoint with dedicated resources
     model.deploy(
@@ -109,19 +115,23 @@ def deploy_model_with_dedicated_resources_sample(
     return model
 
 if __name__ == "__main__":
-    # Replace with your actual Google Cloud project ID and desired region
-    project_id = "your-project-id"
-    location = "us-central1"
+    
+    file_path = 'config.json'
 
-    # Example: Create an endpoint
-    endpoint = create_endpoint_sample(project_id, "My Endpoint", location)
+    with open(file_path, 'r') as file:
+        config = json.load(file)
 
-    # Example: Deploy a model to the created endpoint
-    model_name = "projects/{project_id}/locations/{location}/models/{model_id}".format(
-        project_id=project_id, location=location, model_id="your-model-id"
-    )
+    PROJECT_ID = config.get('PROJECT_ID', 'beaming-signal-428023-h8')
+    LOCATION = config.get('LOCATION', '')
+    MODEL_ID = config['PIPELINE_PARAMS']['model_display_name']
+
+    # Create an endpoint
+    endpoint = create_endpoint_sample(PROJECT_ID, "My Endpoint", LOCATION)
+
+
+    model_name = MODEL_ID
     machine_type = "n1-standard-4"
 
     deploy_model_with_dedicated_resources_sample(
-        project_id, location, model_name, machine_type, endpoint=endpoint
+        PROJECT_ID, LOCATION, model_name, machine_type, endpoint=endpoint
     )
