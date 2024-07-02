@@ -1,0 +1,795 @@
+{
+  "components": {
+    "comp-condition-2": {
+      "dag": {
+        "tasks": {
+          "load-from-bq": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-load-from-bq"
+            },
+            "inputs": {
+              "parameters": {
+                "dataset_id": {
+                  "componentInputParameter": "pipelinechannel--source_dataset"
+                },
+                "location": {
+                  "componentInputParameter": "pipelinechannel--gcp_region"
+                },
+                "project_id": {
+                  "componentInputParameter": "pipelinechannel--source_project"
+                },
+                "table_id": {
+                  "componentInputParameter": "pipelinechannel--source_table"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "Load data from BQ"
+            }
+          },
+          "preprocess-data": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-preprocess-data"
+            },
+            "dependentTasks": [
+              "load-from-bq"
+            ],
+            "inputs": {
+              "artifacts": {
+                "df_data": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "df_data",
+                    "producerTask": "load-from-bq"
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "Preprocessing data"
+            }
+          },
+          "train-and-save-model": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-train-and-save-model"
+            },
+            "dependentTasks": [
+              "preprocess-data"
+            ],
+            "inputs": {
+              "artifacts": {
+                "train_data": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "train_data",
+                    "producerTask": "preprocess-data"
+                  }
+                }
+              },
+              "parameters": {
+                "model_display_name": {
+                  "componentInputParameter": "pipelinechannel--model_display_name"
+                },
+                "project_id": {
+                  "componentInputParameter": "pipelinechannel--train_project_id"
+                },
+                "region": {
+                  "componentInputParameter": "pipelinechannel--gcp_region"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "Training and saving model"
+            }
+          }
+        }
+      },
+      "inputDefinitions": {
+        "parameters": {
+          "pipelinechannel--data_source": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--gcp_region": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--model_display_name": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--source_dataset": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--source_project": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--source_table": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--train_project_id": {
+            "parameterType": "STRING"
+          }
+        }
+      }
+    },
+    "comp-condition-3": {
+      "dag": {
+        "tasks": {
+          "load-from-gcs": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-load-from-gcs"
+            },
+            "inputs": {
+              "parameters": {
+                "bucket_name": {
+                  "componentInputParameter": "pipelinechannel--source_bucket"
+                },
+                "file_format": {
+                  "runtimeValue": {
+                    "constant": "csv"
+                  }
+                },
+                "file_path": {
+                  "componentInputParameter": "pipelinechannel--datafile_name"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "Load data from GCS"
+            }
+          },
+          "preprocess-data-2": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-preprocess-data-2"
+            },
+            "dependentTasks": [
+              "load-from-gcs"
+            ],
+            "inputs": {
+              "artifacts": {
+                "df_data": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "df_data",
+                    "producerTask": "load-from-gcs"
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "Preprocessing data"
+            }
+          },
+          "train-and-save-model-2": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-train-and-save-model-2"
+            },
+            "dependentTasks": [
+              "preprocess-data-2"
+            ],
+            "inputs": {
+              "artifacts": {
+                "train_data": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "train_data",
+                    "producerTask": "preprocess-data-2"
+                  }
+                }
+              },
+              "parameters": {
+                "model_display_name": {
+                  "componentInputParameter": "pipelinechannel--model_display_name"
+                },
+                "project_id": {
+                  "componentInputParameter": "pipelinechannel--train_project_id"
+                },
+                "region": {
+                  "componentInputParameter": "pipelinechannel--gcp_region"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "Training and saving model"
+            }
+          }
+        }
+      },
+      "inputDefinitions": {
+        "parameters": {
+          "pipelinechannel--data_source": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--datafile_name": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--gcp_region": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--model_display_name": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--source_bucket": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--train_project_id": {
+            "parameterType": "STRING"
+          }
+        }
+      }
+    },
+    "comp-condition-4": {
+      "dag": {
+        "tasks": {
+          "error-raising": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-error-raising"
+            },
+            "inputs": {
+              "parameters": {
+                "msg": {
+                  "runtimeValue": {
+                    "constant": "No se logro validar la fuente de datos"
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "error-raising"
+            }
+          }
+        }
+      },
+      "inputDefinitions": {
+        "parameters": {
+          "pipelinechannel--data_source": {
+            "parameterType": "STRING"
+          }
+        }
+      }
+    },
+    "comp-condition-branches-1": {
+      "dag": {
+        "tasks": {
+          "condition-2": {
+            "componentRef": {
+              "name": "comp-condition-2"
+            },
+            "inputs": {
+              "parameters": {
+                "pipelinechannel--data_source": {
+                  "componentInputParameter": "pipelinechannel--data_source"
+                },
+                "pipelinechannel--gcp_region": {
+                  "componentInputParameter": "pipelinechannel--gcp_region"
+                },
+                "pipelinechannel--model_display_name": {
+                  "componentInputParameter": "pipelinechannel--model_display_name"
+                },
+                "pipelinechannel--source_dataset": {
+                  "componentInputParameter": "pipelinechannel--source_dataset"
+                },
+                "pipelinechannel--source_project": {
+                  "componentInputParameter": "pipelinechannel--source_project"
+                },
+                "pipelinechannel--source_table": {
+                  "componentInputParameter": "pipelinechannel--source_table"
+                },
+                "pipelinechannel--train_project_id": {
+                  "componentInputParameter": "pipelinechannel--train_project_id"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "condition-2"
+            },
+            "triggerPolicy": {
+              "condition": "inputs.parameter_values['pipelinechannel--data_source'] == 'bigquery'"
+            }
+          },
+          "condition-3": {
+            "componentRef": {
+              "name": "comp-condition-3"
+            },
+            "inputs": {
+              "parameters": {
+                "pipelinechannel--data_source": {
+                  "componentInputParameter": "pipelinechannel--data_source"
+                },
+                "pipelinechannel--datafile_name": {
+                  "componentInputParameter": "pipelinechannel--datafile_name"
+                },
+                "pipelinechannel--gcp_region": {
+                  "componentInputParameter": "pipelinechannel--gcp_region"
+                },
+                "pipelinechannel--model_display_name": {
+                  "componentInputParameter": "pipelinechannel--model_display_name"
+                },
+                "pipelinechannel--source_bucket": {
+                  "componentInputParameter": "pipelinechannel--source_bucket"
+                },
+                "pipelinechannel--train_project_id": {
+                  "componentInputParameter": "pipelinechannel--train_project_id"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "condition-3"
+            },
+            "triggerPolicy": {
+              "condition": "!(inputs.parameter_values['pipelinechannel--data_source'] == 'bigquery') && inputs.parameter_values['pipelinechannel--data_source'] == 'storage'"
+            }
+          },
+          "condition-4": {
+            "componentRef": {
+              "name": "comp-condition-4"
+            },
+            "inputs": {
+              "parameters": {
+                "pipelinechannel--data_source": {
+                  "componentInputParameter": "pipelinechannel--data_source"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "condition-4"
+            },
+            "triggerPolicy": {
+              "condition": "!(inputs.parameter_values['pipelinechannel--data_source'] == 'bigquery') && !(inputs.parameter_values['pipelinechannel--data_source'] == 'storage')"
+            }
+          }
+        }
+      },
+      "inputDefinitions": {
+        "parameters": {
+          "pipelinechannel--data_source": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--datafile_name": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--gcp_region": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--model_display_name": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--source_bucket": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--source_dataset": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--source_project": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--source_table": {
+            "parameterType": "STRING"
+          },
+          "pipelinechannel--train_project_id": {
+            "parameterType": "STRING"
+          }
+        }
+      }
+    },
+    "comp-error-raising": {
+      "executorLabel": "exec-error-raising",
+      "inputDefinitions": {
+        "parameters": {
+          "msg": {
+            "parameterType": "STRING"
+          }
+        }
+      }
+    },
+    "comp-load-from-bq": {
+      "executorLabel": "exec-load-from-bq",
+      "inputDefinitions": {
+        "parameters": {
+          "dataset_id": {
+            "description": "The dataset ID within BigQuery.",
+            "parameterType": "STRING"
+          },
+          "location": {
+            "description": "The location of the BigQuery dataset. Default is \"EU\".",
+            "parameterType": "STRING"
+          },
+          "project_id": {
+            "description": "The Google Cloud project ID.",
+            "parameterType": "STRING"
+          },
+          "table_id": {
+            "description": "The table ID within the dataset.",
+            "parameterType": "STRING"
+          }
+        }
+      },
+      "outputDefinitions": {
+        "artifacts": {
+          "df_data": {
+            "artifactType": {
+              "schemaTitle": "system.Dataset",
+              "schemaVersion": "0.0.1"
+            }
+          }
+        }
+      }
+    },
+    "comp-load-from-gcs": {
+      "executorLabel": "exec-load-from-gcs",
+      "inputDefinitions": {
+        "parameters": {
+          "bucket_name": {
+            "description": "The name of the GCS bucket.",
+            "parameterType": "STRING"
+          },
+          "file_format": {
+            "defaultValue": "csv",
+            "description": "The format of the file (e.g., \"csv\", \"json\"). Default is \"csv\".",
+            "isOptional": true,
+            "parameterType": "STRING"
+          },
+          "file_path": {
+            "description": "The path to the file within the GCS bucket.",
+            "parameterType": "STRING"
+          }
+        }
+      },
+      "outputDefinitions": {
+        "artifacts": {
+          "df_data": {
+            "artifactType": {
+              "schemaTitle": "system.Dataset",
+              "schemaVersion": "0.0.1"
+            }
+          }
+        }
+      }
+    },
+    "comp-preprocess-data": {
+      "executorLabel": "exec-preprocess-data",
+      "inputDefinitions": {
+        "artifacts": {
+          "df_data": {
+            "artifactType": {
+              "schemaTitle": "system.Dataset",
+              "schemaVersion": "0.0.1"
+            },
+            "description": "Input DataFrame with potential null values."
+          }
+        }
+      },
+      "outputDefinitions": {
+        "artifacts": {
+          "train_data": {
+            "artifactType": {
+              "schemaTitle": "system.Dataset",
+              "schemaVersion": "0.0.1"
+            }
+          }
+        }
+      }
+    },
+    "comp-preprocess-data-2": {
+      "executorLabel": "exec-preprocess-data-2",
+      "inputDefinitions": {
+        "artifacts": {
+          "df_data": {
+            "artifactType": {
+              "schemaTitle": "system.Dataset",
+              "schemaVersion": "0.0.1"
+            },
+            "description": "Input DataFrame with potential null values."
+          }
+        }
+      },
+      "outputDefinitions": {
+        "artifacts": {
+          "train_data": {
+            "artifactType": {
+              "schemaTitle": "system.Dataset",
+              "schemaVersion": "0.0.1"
+            }
+          }
+        }
+      }
+    },
+    "comp-train-and-save-model": {
+      "executorLabel": "exec-train-and-save-model",
+      "inputDefinitions": {
+        "artifacts": {
+          "train_data": {
+            "artifactType": {
+              "schemaTitle": "system.Dataset",
+              "schemaVersion": "0.0.1"
+            }
+          }
+        },
+        "parameters": {
+          "model_display_name": {
+            "description": "Display name for the model in Vertex AI.",
+            "parameterType": "STRING"
+          },
+          "project_id": {
+            "description": "Google Cloud project ID.",
+            "parameterType": "STRING"
+          },
+          "region": {
+            "description": "Region for Vertex AI.",
+            "parameterType": "STRING"
+          }
+        }
+      }
+    },
+    "comp-train-and-save-model-2": {
+      "executorLabel": "exec-train-and-save-model-2",
+      "inputDefinitions": {
+        "artifacts": {
+          "train_data": {
+            "artifactType": {
+              "schemaTitle": "system.Dataset",
+              "schemaVersion": "0.0.1"
+            }
+          }
+        },
+        "parameters": {
+          "model_display_name": {
+            "description": "Display name for the model in Vertex AI.",
+            "parameterType": "STRING"
+          },
+          "project_id": {
+            "description": "Google Cloud project ID.",
+            "parameterType": "STRING"
+          },
+          "region": {
+            "description": "Region for Vertex AI.",
+            "parameterType": "STRING"
+          }
+        }
+      }
+    }
+  },
+  "deploymentSpec": {
+    "executors": {
+      "exec-error-raising": {
+        "container": {
+          "args": [
+            "--executor_input",
+            "{{$}}",
+            "--function_to_execute",
+            "error_raising"
+          ],
+          "command": [
+            "sh",
+            "-c",
+            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.5.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"' && \"$0\" \"$@\"\n",
+            "sh",
+            "-ec",
+            "program_path=$(mktemp -d)\n\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\n_KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+            "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import *\n\ndef error_raising(msg: str) -> None:\n    raise(msg)\n\n"
+          ],
+          "image": "python:3.7"
+        }
+      },
+      "exec-load-from-bq": {
+        "container": {
+          "args": [
+            "--executor_input",
+            "{{$}}",
+            "--function_to_execute",
+            "load_from_bq"
+          ],
+          "command": [
+            "sh",
+            "-c",
+            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.5.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'google-cloud-bigquery' && \"$0\" \"$@\"\n",
+            "sh",
+            "-ec",
+            "program_path=$(mktemp -d)\n\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\n_KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+            "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import *\n\ndef load_from_bq(\n    project_id: str,\n    dataset_id: str,\n    table_id: str,\n    location: str,\n    df_data: Output[Dataset]\n) -> None:\n    \"\"\"\n    Load data from a specified BigQuery table and return a pandas DataFrame.\n\n    Args:\n        project_id (str): The Google Cloud project ID.\n        dataset_id (str): The dataset ID within BigQuery.\n        table_id (str): The table ID within the dataset.\n        location (str): The location of the BigQuery dataset. Default is \"EU\".\n\n    Returns:\n        pd.DataFrame: DataFrame containing the data from the BigQuery table.\n    \"\"\"\n\n    from google.cloud import bigquery\n\n    try:\n        # Initiate the BigQuery client to connect with the project.\n        bq_client = bigquery.Client(project=project_id, location=location)\n\n        # Load data from the BigQuery table.\n        dataset_ref = bq_client.dataset(dataset_id, project=project_id)\n        table_ref = dataset_ref.table(table_id)\n        table = bq_client.get_table(table_ref)\n        rows = bq_client.list_rows(table)\n\n        # Convert to a pandas DataFrame.\n        df_loaded = rows.to_dataframe()\n\n        if not df_loaded.empty:\n            df_loaded.to_csv(df_data.path, index=False)\n        else:\n            raise ValueError(\"Table content is empty.\")\n\n    except Exception as e:\n        print(f\"An error occurred during table load: {e}\")\n        raise\n\n"
+          ],
+          "image": "python:3.7"
+        }
+      },
+      "exec-load-from-gcs": {
+        "container": {
+          "args": [
+            "--executor_input",
+            "{{$}}",
+            "--function_to_execute",
+            "load_from_gcs"
+          ],
+          "command": [
+            "sh",
+            "-c",
+            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.5.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'google-cloud-storage' && \"$0\" \"$@\"\n",
+            "sh",
+            "-ec",
+            "program_path=$(mktemp -d)\n\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\n_KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+            "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import *\n\ndef load_from_gcs(\n    bucket_name: str,\n    file_path: str,\n    df_data: Output[Dataset],\n    file_format: str = \"csv\",\n) -> None:\n\n    \"\"\"\n    Load data from a specified GCS bucket and file, and return a pandas DataFrame.\n\n    Args:\n        bucket_name (str): The name of the GCS bucket.\n        file_path (str): The path to the file within the GCS bucket.\n        file_format (str): The format of the file (e.g., \"csv\", \"json\"). Default is \"csv\".\n\n    Returns:\n        pd.DataFrame: DataFrame containing the data from the file.\n    \"\"\"\n\n    from google.cloud import storage\n    import pandas as pd\n    from io import BytesIO\n\n    try:\n        # Initialize the GCS client.\n        storage_client = storage.Client()\n\n        # Get the bucket and blob.\n        bucket = storage_client.bucket(bucket_name)\n        blob = bucket.blob(file_path)\n        file_bytes = blob.download_as_bytes()\n\n        # Load the file into a pandas DataFrame based on the specified format.\n        if file_format == \"csv\":\n            df_loaded = pd.read_csv(BytesIO(file_bytes))\n        else:\n            raise ValueError(\"Unsupported file format. Please use 'csv'.\")\n\n        if not df_loaded.empty:\n            df_loaded.to_csv(df_data.path, index=False)\n        else:\n            raise ValueError(\"Table content is empty.\")\n    except Exception as e:\n        print(f\"An error occurred during file load: {e}\")\n        raise\n\n"
+          ],
+          "image": "python:3.7"
+        }
+      },
+      "exec-preprocess-data": {
+        "container": {
+          "args": [
+            "--executor_input",
+            "{{$}}",
+            "--function_to_execute",
+            "preprocess_data"
+          ],
+          "command": [
+            "sh",
+            "-c",
+            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.5.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'scikit-learn' && \"$0\" \"$@\"\n",
+            "sh",
+            "-ec",
+            "program_path=$(mktemp -d)\n\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\n_KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+            "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import *\n\ndef preprocess_data(\n    df_data: Input[Dataset],\n    train_data: Output[Dataset],\n) -> None:\n    \"\"\"\n    Preprocess the input DataFrame by handling null values in the specified columns.\n\n    Args:\n        df_data (pd.DataFrame): Input DataFrame with potential null values.\n\n    Returns:\n        pd.DataFrame: DataFrame preprocessed.\n    \"\"\"\n\n    from sklearn.impute import SimpleImputer\n    import pandas as pd\n\n    try:\n        # Create a copy of the DataFrame to avoid modifying the original\n        df_imputed = pd.read_csv(df_data.path)\n\n        # Preprocess the data\n        columns_to_impute = ['Age', 'Annual_Income', 'Credit_Score', 'Loan_Amount', 'Number_of_Open_Accounts']\n        imputer = SimpleImputer(fill_value=0)\n        df_imputed[columns_to_impute] = imputer.fit_transform(df[columns_to_impute])\n\n        if not df_imputed.empty:\n            df_imputed.to_csv(train_data.path, index=False)\n        else:\n            raise ValueError(\"Table content is empty.\")\n\n    except Exception as e:\n        print(f\"An error occurred during preprocessing: {e}\")\n        raise  \n\n"
+          ],
+          "image": "python:3.7"
+        }
+      },
+      "exec-preprocess-data-2": {
+        "container": {
+          "args": [
+            "--executor_input",
+            "{{$}}",
+            "--function_to_execute",
+            "preprocess_data"
+          ],
+          "command": [
+            "sh",
+            "-c",
+            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.5.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'scikit-learn' && \"$0\" \"$@\"\n",
+            "sh",
+            "-ec",
+            "program_path=$(mktemp -d)\n\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\n_KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+            "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import *\n\ndef preprocess_data(\n    df_data: Input[Dataset],\n    train_data: Output[Dataset],\n) -> None:\n    \"\"\"\n    Preprocess the input DataFrame by handling null values in the specified columns.\n\n    Args:\n        df_data (pd.DataFrame): Input DataFrame with potential null values.\n\n    Returns:\n        pd.DataFrame: DataFrame preprocessed.\n    \"\"\"\n\n    from sklearn.impute import SimpleImputer\n    import pandas as pd\n\n    try:\n        # Create a copy of the DataFrame to avoid modifying the original\n        df_imputed = pd.read_csv(df_data.path)\n\n        # Preprocess the data\n        columns_to_impute = ['Age', 'Annual_Income', 'Credit_Score', 'Loan_Amount', 'Number_of_Open_Accounts']\n        imputer = SimpleImputer(fill_value=0)\n        df_imputed[columns_to_impute] = imputer.fit_transform(df[columns_to_impute])\n\n        if not df_imputed.empty:\n            df_imputed.to_csv(train_data.path, index=False)\n        else:\n            raise ValueError(\"Table content is empty.\")\n\n    except Exception as e:\n        print(f\"An error occurred during preprocessing: {e}\")\n        raise  \n\n"
+          ],
+          "image": "python:3.7"
+        }
+      },
+      "exec-train-and-save-model": {
+        "container": {
+          "args": [
+            "--executor_input",
+            "{{$}}",
+            "--function_to_execute",
+            "train_and_save_model"
+          ],
+          "command": [
+            "sh",
+            "-c",
+            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.5.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'scikit-learn' 'google-cloud-aiplatform' && \"$0\" \"$@\"\n",
+            "sh",
+            "-ec",
+            "program_path=$(mktemp -d)\n\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\n_KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+            "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import *\n\ndef train_and_save_model(\n    project_id: str, \n    region: str, \n    model_display_name: str,\n    train_data: Input[Dataset]\n) -> None:\n    \"\"\"\n    Train a Logistic Regression model and save it to the Vertex AI Model Registry and Google Cloud Storage.\n\n    Args:\n        df (pd.DataFrame): Input DataFrame for training.\n        project_id (str): Google Cloud project ID.\n        region (str): Region for Vertex AI.\n        model_display_name (str): Display name for the model in Vertex AI.\n\n    Returns:\n        None\n    \"\"\"\n\n    from sklearn.model_selection import train_test_split\n    from sklearn.linear_model import LogisticRegression\n    from google.cloud import aiplatform\n    import pandas as pd\n    import joblib\n    import os\n\n    try:\n\n        df = pd.read_csv(df_data.path)\n\n        # Splitting the data into features and target\n        X = df.drop('Loan_Approval', axis=1)\n        y = df['Loan_Approval']\n\n        # Splitting the data into training and test sets\n        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.01, random_state=42)\n\n        # Training the Logistic Regression model\n        model = LogisticRegression()\n        model.fit(X_train, y_train)\n\n        # Predictions\n        y_pred = model.predict(X_test)\n        print(y_pred)\n\n        # Save the model to a local file\n        model_filename = 'model.joblib'\n        joblib.dump(model, model_filename)\n\n        # Initialize the Vertex AI client\n        aiplatform.init(project=project_id, location=region)\n\n        # Upload the model to Vertex AI Model Registry\n        aiplatform.Model.upload(\n            display_name=model_display_name,\n            artifact_uri=f'gs://{project_id}/{model_filename}',  # GCS bucket URI for Vertex AI Model Registry\n            serving_container_image_uri='us-docker.pkg.dev/vertex-ai/prediction/sklearn-cpu.0-23:latest'\n        )\n\n        print(f\"Model {model_display_name} successfully uploaded to Vertex AI Model Registry.\")\n\n        # Upload the model file to Google Cloud Storage\n        storage_client = storage.Client()\n        bucket = storage_client.bucket(project_id)\n        blob = bucket.blob(model_filename)\n        blob.upload_from_filename(model_filename)\n\n        print(f\"Model {model_filename} uploaded to Google Cloud Storage.\")\n\n    except Exception as e:\n        print(f\"An error occurred during model training, upload to Vertex AI, or upload to Cloud Storage: {e}\")\n        raise  # Re-raise the exception to stop the pipeline\n\n"
+          ],
+          "image": "python:3.7"
+        }
+      },
+      "exec-train-and-save-model-2": {
+        "container": {
+          "args": [
+            "--executor_input",
+            "{{$}}",
+            "--function_to_execute",
+            "train_and_save_model"
+          ],
+          "command": [
+            "sh",
+            "-c",
+            "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'kfp==2.5.0' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'scikit-learn' 'google-cloud-aiplatform' && \"$0\" \"$@\"\n",
+            "sh",
+            "-ec",
+            "program_path=$(mktemp -d)\n\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\n_KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+            "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import *\n\ndef train_and_save_model(\n    project_id: str, \n    region: str, \n    model_display_name: str,\n    train_data: Input[Dataset]\n) -> None:\n    \"\"\"\n    Train a Logistic Regression model and save it to the Vertex AI Model Registry and Google Cloud Storage.\n\n    Args:\n        df (pd.DataFrame): Input DataFrame for training.\n        project_id (str): Google Cloud project ID.\n        region (str): Region for Vertex AI.\n        model_display_name (str): Display name for the model in Vertex AI.\n\n    Returns:\n        None\n    \"\"\"\n\n    from sklearn.model_selection import train_test_split\n    from sklearn.linear_model import LogisticRegression\n    from google.cloud import aiplatform\n    import pandas as pd\n    import joblib\n    import os\n\n    try:\n\n        df = pd.read_csv(df_data.path)\n\n        # Splitting the data into features and target\n        X = df.drop('Loan_Approval', axis=1)\n        y = df['Loan_Approval']\n\n        # Splitting the data into training and test sets\n        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.01, random_state=42)\n\n        # Training the Logistic Regression model\n        model = LogisticRegression()\n        model.fit(X_train, y_train)\n\n        # Predictions\n        y_pred = model.predict(X_test)\n        print(y_pred)\n\n        # Save the model to a local file\n        model_filename = 'model.joblib'\n        joblib.dump(model, model_filename)\n\n        # Initialize the Vertex AI client\n        aiplatform.init(project=project_id, location=region)\n\n        # Upload the model to Vertex AI Model Registry\n        aiplatform.Model.upload(\n            display_name=model_display_name,\n            artifact_uri=f'gs://{project_id}/{model_filename}',  # GCS bucket URI for Vertex AI Model Registry\n            serving_container_image_uri='us-docker.pkg.dev/vertex-ai/prediction/sklearn-cpu.0-23:latest'\n        )\n\n        print(f\"Model {model_display_name} successfully uploaded to Vertex AI Model Registry.\")\n\n        # Upload the model file to Google Cloud Storage\n        storage_client = storage.Client()\n        bucket = storage_client.bucket(project_id)\n        blob = bucket.blob(model_filename)\n        blob.upload_from_filename(model_filename)\n\n        print(f\"Model {model_filename} uploaded to Google Cloud Storage.\")\n\n    except Exception as e:\n        print(f\"An error occurred during model training, upload to Vertex AI, or upload to Cloud Storage: {e}\")\n        raise  # Re-raise the exception to stop the pipeline\n\n"
+          ],
+          "image": "python:3.7"
+        }
+      }
+    }
+  },
+  "pipelineInfo": {
+    "description": "Logistic regression model trining pipeline",
+    "name": "training-pipeline"
+  },
+  "root": {
+    "dag": {
+      "tasks": {
+        "condition-branches-1": {
+          "componentRef": {
+            "name": "comp-condition-branches-1"
+          },
+          "inputs": {
+            "parameters": {
+              "pipelinechannel--data_source": {
+                "componentInputParameter": "data_source"
+              },
+              "pipelinechannel--datafile_name": {
+                "componentInputParameter": "datafile_name"
+              },
+              "pipelinechannel--gcp_region": {
+                "componentInputParameter": "gcp_region"
+              },
+              "pipelinechannel--model_display_name": {
+                "componentInputParameter": "model_display_name"
+              },
+              "pipelinechannel--source_bucket": {
+                "componentInputParameter": "source_bucket"
+              },
+              "pipelinechannel--source_dataset": {
+                "componentInputParameter": "source_dataset"
+              },
+              "pipelinechannel--source_project": {
+                "componentInputParameter": "source_project"
+              },
+              "pipelinechannel--source_table": {
+                "componentInputParameter": "source_table"
+              },
+              "pipelinechannel--train_project_id": {
+                "componentInputParameter": "train_project_id"
+              }
+            }
+          },
+          "taskInfo": {
+            "name": "condition-branches-1"
+          }
+        }
+      }
+    },
+    "inputDefinitions": {
+      "parameters": {
+        "data_source": {
+          "parameterType": "STRING"
+        },
+        "datafile_name": {
+          "parameterType": "STRING"
+        },
+        "gcp_region": {
+          "defaultValue": "us-central1",
+          "isOptional": true,
+          "parameterType": "STRING"
+        },
+        "model_display_name": {
+          "parameterType": "STRING"
+        },
+        "source_bucket": {
+          "parameterType": "STRING"
+        },
+        "source_dataset": {
+          "parameterType": "STRING"
+        },
+        "source_project": {
+          "parameterType": "STRING"
+        },
+        "source_table": {
+          "parameterType": "STRING"
+        },
+        "train_project_id": {
+          "parameterType": "STRING"
+        }
+      }
+    }
+  },
+  "schemaVersion": "2.1.0",
+  "sdkVersion": "kfp-2.5.0"
+}
