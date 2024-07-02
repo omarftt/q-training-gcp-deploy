@@ -97,4 +97,4 @@ bash deploy/api-rest/deploy.sh
 ```
 
 ## 7. Arquitecture
-To understand better the services used. You can find the architecture here: [Architecture](image/arch.png)
+To understand better the services used. You can find the architecture here: [Architecture](images/arch.png)
