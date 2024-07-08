@@ -1,17 +1,17 @@
 {
     "PIPELINE_DISPLAY_NAME": "Training pipeline",
     "PIPELINE_DESCRIPTION": "Logistic regression model trining pipeline",
-    "PIPELINE_PROJECT_ID": "beaming-signal-428023-h8",
-    "LOCATION": "us-central1",
+    "PIPELINE_PROJECT_ID": "",
+    "LOCATION": "",
     "PIPELINE_PARAMS":{
         "data_source": "bigquery",
-        "source_project": "beaming-signal-428023-h8",
-        "source_dataset": "experimental_dataset",
-        "source_table": "loan_approval_table",
+        "source_project": "",
+        "source_dataset": "",
+        "source_table": "",
         "source_bucket": "experimental_training_bucket",
         "datafile_name": "dataset.csv",
-        "train_project_id": "beaming-signal-428023-h8",
+        "train_project_id": "",
         "model_display_name": "model_logistic_regression_v1"
     },
-    "SERVICE_ACCOUNT": "sa-experimental-training@beaming-signal-428023-h8.iam.gserviceaccount.com"
+    "SERVICE_ACCOUNT": ""
 }
